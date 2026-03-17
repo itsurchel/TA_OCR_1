@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask import render_template
 from repository.process_image import process_image
 from werkzeug.utils import secure_filename
 import os
@@ -42,6 +43,10 @@ def internal_server_error(error):
 @app.route('/', methods=['GET'])
 def index():
     return 'welcome'
+
+@app.route('/web', methods=['GET'])
+def web():
+    return render_template('index.html')
 
 @app.route('/api/health-check', methods=['GET'])
 def healthCheck():
