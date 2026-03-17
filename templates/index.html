@@ -1,1 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OCR System</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            padding: 40px;
+        }
+        .container {
+            width: 500px;
+            margin: auto;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+        }
+        img {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+        pre {
+            text-align: left;
+            background: #f4f4f4;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
 
+<div class="container">
+    <h2>OCR Scanner</h2>
+
+    <form id="uploadForm">
+        <input type="file" name="file" required><br>
+        <input type="text" name="keyword" placeholder="Masukkan keyword" required><br>
+        <input type="text" name="score" placeholder="Score (0.1 - 1.0)" value="0.5"><br>
+        <button type="submit">Upload & Scan</button>
+    </form>
+
+    <h3>Hasil OCR:</h3>
+    <pre id="textResult"></pre>
+
+    <h3>Hasil Highlight:</h3>
+    <img id="imageResult"/>
+
+</div>
+
+<script>
+document.getElementById('uploadForm').onsubmit = async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    const res = await fetch('/api/ocr/images/v1', {
+        method: 'POST',
+        body: formData
+    });
+
+    const data = await res.json();
+
+    if (data.err) {
+        alert(data.message);
+        return;
+    }
+
+    // tampilkan teks
+    document.getElementById('textResult').innerText = data.data.text;
+
+    // tampilkan gambar base64
+    if (data.data.image_result) {
+        document.getElementById('imageResult').src =
+            "data:image/png;base64," + data.data.image_result;
+    }
+};
+</script>
+
+</body>
+</html>
